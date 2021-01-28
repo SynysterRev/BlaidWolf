@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public enum Direction
+{
+    Up,
+    Right,
+    Down,
+    Left
+}
 public class PlayerController : MonoBehaviour
 {
     #region Private Attributes
@@ -11,8 +18,11 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb = null;
     private Animator anim = null;
     private Vector2 lastDirection = Vector2.zero;
-
+    private Direction lastDir = Direction.Down;
     private string currentState = "";
+    //private 
+
+    //private const
     #endregion
 
     #region Monobehavior methods
@@ -31,6 +41,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Private methods
+    //change state for animation
     private void ChangeAnimationState(string newState)
     {
         if (currentState == newState) return;
@@ -46,9 +57,11 @@ public class PlayerController : MonoBehaviour
         //get direction of input
         Vector2 dir = context.ReadValue<Vector2>();
 
+        //prevent walking in diagonal
+        //use the last direction pressed
         if (lastDirection != dir && dir != Vector2.zero)
         {
-            if (Mathf.Abs(dir.x) != 1.0f &&  Mathf.Abs(dir.x - lastDirection.x) < 0.5f)
+            if (Mathf.Abs(dir.x) != 1.0f && Mathf.Abs(dir.x - lastDirection.x) < 0.5f)
             {
                 dir.x = 0.0f;
                 dir.y = dir.y > 0.0f ? 1.0f : -1.0f;
@@ -60,19 +73,38 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        //change direction in animation
-        anim.SetFloat("SpeedX", dir.x);
-        anim.SetFloat("SpeedY", dir.y);
+        //walking
+        if (dir.x == 1.0f)
+        {
+            //move right
+            lastDir = Direction.Right;
+        }
+        else if (dir.x == -1.0f)
+        {
+            //move left
+            lastDir = Direction.Left;
+        }
+        else if (dir.y == 1.0f)
+        {
+            //move up
+            lastDir = Direction.Up;
+        }
+        else if (dir.y == -1.0f)
+        {
+            //move down
+            lastDir = Direction.Down;
+        }
+        ChangeAnimationState("Walk" + lastDir + "Player");
+
+        //not moving then idle in last direction walk
+        if (dir == Vector2.zero)
+        {
+            ChangeAnimationState("Idle" + lastDir + "Player");
+        }
 
         //move player
         rb.velocity = dir * speed;
 
-        anim.SetBool("IsMoving", true);
-        //activate idle animation when all input are not pressed
-        if (context.canceled)
-        {
-            anim.SetBool("IsMoving", false);
-        }
         lastDirection = dir;
     }
     #endregion
