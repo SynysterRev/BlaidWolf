@@ -5,10 +5,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Private Attributes
     [SerializeField]
     private float speed = 5.0f;
     private Rigidbody2D rb = null;
     private Animator anim = null;
+    #endregion
+
+    #region Monobehavior methods
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +25,15 @@ public class PlayerController : MonoBehaviour
     {
 
     }
+    #endregion
 
+    #region Private methods
+    private void CheckPlayerIsMoving()
+    {
+
+    }
+    #endregion
+    #region Public methods
     public void Move(InputAction.CallbackContext context)
     {
         Vector2 dir = context.ReadValue<Vector2>();
@@ -29,4 +41,5 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("SpeedY", dir.y);
         rb.velocity = dir * speed;
     }
+    #endregion
 }
