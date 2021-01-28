@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Private methods
+    //change state for animation
     private void ChangeAnimationState(string newState)
     {
         if (currentState == newState) return;
@@ -56,6 +57,8 @@ public class PlayerController : MonoBehaviour
         //get direction of input
         Vector2 dir = context.ReadValue<Vector2>();
 
+        //prevent walking in diagonal
+        //use the last direction pressed
         if (lastDirection != dir && dir != Vector2.zero)
         {
             if (Mathf.Abs(dir.x) != 1.0f && Mathf.Abs(dir.x - lastDirection.x) < 0.5f)
@@ -91,29 +94,17 @@ public class PlayerController : MonoBehaviour
             //move down
             lastDir = Direction.Down;
         }
-
         ChangeAnimationState("Walk" + lastDir + "Player");
+
+        //not moving then idle in last direction walk
         if (dir == Vector2.zero)
         {
             ChangeAnimationState("Idle" + lastDir + "Player");
         }
 
-        //idle
-
-
-        //change direction in animation
-       /* anim.SetFloat("SpeedX", dir.x);
-        anim.SetFloat("SpeedY", dir.y);*/
-
         //move player
         rb.velocity = dir * speed;
 
-       // anim.SetBool("IsMoving", true);
-        //activate idle animation when all input are not pressed
-       /* if (context.canceled)
-        {
-            anim.SetBool("IsMoving", false);
-        }*/
         lastDirection = dir;
     }
     #endregion
