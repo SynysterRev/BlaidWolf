@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class DataPlayer
 {
-    #region Attributes
+    #region Public Fields
+    #endregion
+
+    #region Private Fields
     private const float Min  = 0.0f;
     private float health     = 100.0f;
     private float healthMax  = 100.0f;
@@ -13,6 +16,21 @@ public class DataPlayer
     private float adrenaline = 100.0f;
     private float adrenalineMax = 100.0f;
     private bool  isDead     = false;
+    #endregion
+
+    #region Accessors
+    public float GetHealth() => health;
+
+    public float GetHealthMax() => healthMax;
+
+    public float GetMana() => mana;
+
+    public float GetManaMax() => manaMax;
+
+    public float GetAdrenaline() => adrenaline;
+
+    public float GetAdrenalineMax() => adrenalineMax;
+
     #endregion
 
     #region Public Methods
@@ -94,4 +112,6 @@ public class DataPlayer
 
     #region Private Methods
     #endregion
+
+
 }
