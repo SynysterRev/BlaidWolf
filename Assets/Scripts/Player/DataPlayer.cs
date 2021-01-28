@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Data
+public class DataPlayer
 {
-    private const float Min = 0.0f;
+    #region Public Fields
+    #endregion
+
+    #region Private Fields
+    private const float Min  = 0.0f;
     private float health     = 100.0f;
     private float healthMax  = 100.0f;
     private float mana       = 100.0f;
@@ -12,6 +16,24 @@ public class Data
     private float adrenaline = 100.0f;
     private float adrenalineMax = 100.0f;
     private bool  isDead     = false;
+    #endregion
+
+    #region Accessors
+    public float GetHealth() => health;
+
+    public float GetHealthMax() => healthMax;
+
+    public float GetMana() => mana;
+
+    public float GetManaMax() => manaMax;
+
+    public float GetAdrenaline() => adrenaline;
+
+    public float GetAdrenalineMax() => adrenalineMax;
+
+    #endregion
+
+    #region Public Methods
 
     //Health management
     public void LooseHealth(float damage)
@@ -86,4 +108,10 @@ public class Data
         health = healthMax;
         mana = manaMax;
     }
+    #endregion
+
+    #region Private Methods
+    #endregion
+
+
 }
