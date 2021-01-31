@@ -22,9 +22,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "OpenDoor",
+                    "name": "InteractE",
                     "type": "Button",
                     "id": "dbceece6-c86e-440b-bfb9-b7657ef9636f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "InteractF",
+                    "type": "Button",
+                    "id": "e2efe915-cb95-4f87-b27a-ae3c36f90626",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -224,8 +232,19 @@
                     "path": "<Keyboard>/e",
                     "interactions": "Press",
                     "processors": "",
-                    "groups": "",
-                    "action": "OpenDoor",
+                    "groups": "Keyboard&Mouse",
+                    "action": "InteractE",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "20b547d2-5115-4b28-9517-50dcf6530073",
+                    "path": "<Keyboard>/f",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "InteractF",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
