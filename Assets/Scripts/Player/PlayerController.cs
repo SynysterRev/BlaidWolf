@@ -13,13 +13,22 @@ public enum Direction
 public class PlayerController : MonoBehaviour
 {
     #region Private Attributes
+    private DataPlayer dataPlayer = null;
     [SerializeField]
     private float speed = 5.0f;
+    [SerializeField]
+    private DashSkill dash = null;
     private Rigidbody2D rb = null;
     private Animator anim = null;
+    private Vector2 dir = Vector2.zero;
     private Vector2 lastDirection = Vector2.zero;
     private Direction lastDir = Direction.Down;
     private string currentState = "";
+
+    private bool isMoving = false;
+    private bool hasStop = false;
+    //Skills var
+    private bool isDashing = false;
     //private 
 
     //private const
@@ -31,12 +40,18 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        dataPlayer = new DataPlayer();
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    private void FixedUpdate()
+    {
+        MoveCharacter();
     }
     #endregion
 
@@ -50,62 +65,105 @@ public class PlayerController : MonoBehaviour
 
         currentState = newState;
     }
+
+    private void EndDashing()
+    {
+        isDashing = false;
+    }
+
+    private void MoveCharacter()
+    {
+        if (isDashing) return;
+        //prevent walking in diagonal
+        //use the last direction pressed
+        if (isMoving)
+        {
+            if (lastDirection != dir && dir != Vector2.zero)
+            {
+                if (Mathf.Abs(dir.x) != 1.0f && Mathf.Abs(dir.x - lastDirection.x) < 0.5f)
+                {
+                    dir.x = 0.0f;
+                    dir.y = dir.y > 0.0f ? 1.0f : -1.0f;
+                }
+                else if (Mathf.Abs(dir.y) != 1.0f && Mathf.Abs(dir.y - lastDirection.y) < 0.5f)
+                {
+                    dir.y = 0.0f;
+                    dir.x = dir.x > 0.0f ? 1.0f : -1.0f;
+                }
+            }
+
+            //walking
+            if (dir.x == 1.0f)
+            {
+                //move right
+                lastDir = Direction.Right;
+            }
+            else if (dir.x == -1.0f)
+            {
+                //move left
+                lastDir = Direction.Left;
+            }
+            else if (dir.y == 1.0f)
+            {
+                //move up
+                lastDir = Direction.Up;
+            }
+            else if (dir.y == -1.0f)
+            {
+                //move down
+                lastDir = Direction.Down;
+            }
+            ChangeAnimationState("Walk" + lastDir + "Player");
+
+            //move player
+            rb.velocity = dir * speed;
+
+            if (dir != Vector2.zero)
+            {
+                lastDirection = dir;
+            }
+        }
+        else if(!isMoving && !hasStop)
+        {
+            hasStop = true;
+            rb.velocity = dir * speed;
+            //not moving then idle in last direction walk
+            if (dir == Vector2.zero)
+            {
+                ChangeAnimationState("Idle" + lastDir + "Player");
+            }
+        }
+    }
     #endregion
     #region Public methods
     public void Move(InputAction.CallbackContext context)
     {
         //get direction of input
-        Vector2 dir = context.ReadValue<Vector2>();
-
-        //prevent walking in diagonal
-        //use the last direction pressed
-        if (lastDirection != dir && dir != Vector2.zero)
+        dir = context.ReadValue<Vector2>();
+        if (context.action.phase == InputActionPhase.Started)
         {
-            if (Mathf.Abs(dir.x) != 1.0f && Mathf.Abs(dir.x - lastDirection.x) < 0.5f)
+            isMoving = true;
+            hasStop = false;
+        }
+        else if(context.action.phase == InputActionPhase.Canceled)
+        {
+            isMoving = false;
+        }
+    }
+
+    public void Dash(InputAction.CallbackContext context)
+    {
+        if (context.action.phase == InputActionPhase.Started)
+        {
+            if (dash.Dash(lastDirection, ref dataPlayer))
             {
-                dir.x = 0.0f;
-                dir.y = dir.y > 0.0f ? 1.0f : -1.0f;
-            }
-            else if (Mathf.Abs(dir.y) != 1.0f && Mathf.Abs(dir.y - lastDirection.y) < 0.5f)
-            {
-                dir.y = 0.0f;
-                dir.x = dir.x > 0.0f ? 1.0f : -1.0f;
+                if (!isDashing)
+                {
+                    isDashing = true;
+                    dash.OnEndDash += EndDashing;
+                }
             }
         }
-
-        //walking
-        if (dir.x == 1.0f)
-        {
-            //move right
-            lastDir = Direction.Right;
-        }
-        else if (dir.x == -1.0f)
-        {
-            //move left
-            lastDir = Direction.Left;
-        }
-        else if (dir.y == 1.0f)
-        {
-            //move up
-            lastDir = Direction.Up;
-        }
-        else if (dir.y == -1.0f)
-        {
-            //move down
-            lastDir = Direction.Down;
-        }
-        ChangeAnimationState("Walk" + lastDir + "Player");
-
-        //not moving then idle in last direction walk
-        if (dir == Vector2.zero)
-        {
-            ChangeAnimationState("Idle" + lastDir + "Player");
-        }
-
-        //move player
-        rb.velocity = dir * speed;
-
-        lastDirection = dir;
     }
     #endregion
 }
