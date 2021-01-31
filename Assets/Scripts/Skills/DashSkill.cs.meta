@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 39a353c14c8dceb459af3f2fa78aa90e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - dataDash: {fileID: 11400000, guid: 3d2a20f296e9d864fbad8a65c28fbd22, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

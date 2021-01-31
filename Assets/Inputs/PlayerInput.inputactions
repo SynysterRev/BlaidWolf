@@ -22,7 +22,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "InteractE",
+                    "name": "OpenDoor",
                     "type": "Button",
                     "id": "dbceece6-c86e-440b-bfb9-b7657ef9636f",
                     "expectedControlType": "Button",
@@ -30,9 +30,9 @@
                     "interactions": ""
                 },
                 {
-                    "name": "InteractF",
+                    "name": "Dash",
                     "type": "Button",
-                    "id": "e2efe915-cb95-4f87-b27a-ae3c36f90626",
+                    "id": "063c3465-7248-40d5-a4fb-37c8e28c4a73",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -232,19 +232,19 @@
                     "path": "<Keyboard>/e",
                     "interactions": "Press",
                     "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "InteractE",
+                    "groups": "",
+                    "action": "OpenDoor",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "20b547d2-5115-4b28-9517-50dcf6530073",
-                    "path": "<Keyboard>/f",
+                    "id": "a6da7fee-6789-4fc3-8932-240fe2bb8d20",
+                    "path": "<Keyboard>/space",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "InteractF",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
