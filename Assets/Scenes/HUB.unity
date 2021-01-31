@@ -217,6 +217,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &844027910 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5868795397678075888, guid: 01f3295fc71e4414abb0628d56847b52,
+    type: 3}
+  m_PrefabInstance: {fileID: 5868795397379610614}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &844027911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844027910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39a353c14c8dceb459af3f2fa78aa90e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dataDash: {fileID: 11400000, guid: 3d2a20f296e9d864fbad8a65c28fbd22, type: 2}
+--- !u!114 &844027914 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5868795397678075900, guid: 01f3295fc71e4414abb0628d56847b52,
+    type: 3}
+  m_PrefabInstance: {fileID: 5868795397379610614}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844027910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7df46759e5b2074cb09d944956b727a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1508303307
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,6 +346,22 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075900, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: dataSkills.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075900, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: dataSkills.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 3d2a20f296e9d864fbad8a65c28fbd22,
+        type: 2}
+    - target: {fileID: 5868795397678075900, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: dash
+      value: 
+      objectReference: {fileID: 844027911}
     - target: {fileID: 5868795397678075902, guid: 01f3295fc71e4414abb0628d56847b52,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -369,6 +416,61 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[12].m_ActionId
+      value: dbceece6-c86e-440b-bfb9-b7657ef9636f
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[12].m_ActionName
+      value: Player/OpenDoor[/Keyboard/e]
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_ActionId
+      value: 063c3465-7248-40d5-a4fb-37c8e28c4a73
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_ActionName
+      value: Player/Dash[/Keyboard/space]
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 844027914}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Dash
+      objectReference: {fileID: 0}
+    - target: {fileID: 5868795397678075903, guid: 01f3295fc71e4414abb0628d56847b52,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01f3295fc71e4414abb0628d56847b52, type: 3}
