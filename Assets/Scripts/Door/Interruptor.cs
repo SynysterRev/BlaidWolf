@@ -16,14 +16,11 @@ public class Interruptor : MonoBehaviour
     #region Private Fields
     [SerializeField]
     private bool activated = false;
-    [SerializeField]
-    private DoorManagement door = null;
-    [SerializeField]
-    private float timerInit = 0.0f;
-    private float timer = 0.0f;
-    private bool timerStarted = false;
     private bool onSlab = false;
-
+    public delegate void DelegateEnterZone(bool onSlab);
+    public event DelegateEnterZone OnEnterZone;
+    public delegate void DelegateExitZone(bool onSlab);
+    public event DelegateEnterZone OnExitZone;
 
     #endregion
 
@@ -38,6 +35,21 @@ public class Interruptor : MonoBehaviour
     public void SetActivated()
     {
         activated = !activated;
+    }
+
+    public void Activate()
+    {
+        activated = true;
+    }
+
+    public void Desactivate()
+    {
+        activated = false;
+    }
+
+    public bool GetOnSlab()
+    {
+        return onSlab;
     }
     #endregion
 
@@ -71,22 +83,23 @@ public class Interruptor : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        SetActivated();
-        PreventDoor();
+        if (isActiveAndEnabled)
+        {
+            onSlab = true;
+            Activate();
+            OnEnterZone?.Invoke(onSlab);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        SetActivated();
-        PreventDoor();
-    }
+        if (isActiveAndEnabled)
+        {
+            onSlab = false;
+            Desactivate();
+            OnExitZone?.Invoke(onSlab);
+        }
 
-    private void PreventDoor()
-    {
-        door.CheckInterruptors();
     }
-
-    //interrupteur n'a qu'une porte
-    //c'est la porte qui est typée
 
 }

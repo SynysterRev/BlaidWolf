@@ -233,12 +233,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d816e52cfce7e247bf539616d96baf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  openDoor: 0
+  doorOpened: 0
   target: {fileID: 55462275}
   speed: 2
   interruptors:
   - {fileID: 1065735851}
-  type: 2
+  type: 4
 --- !u!212 &505147808
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -456,8 +456,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activated: 0
-  door: {fileID: 505147807}
-  timerInit: 0
 --- !u!61 &1065735852
 BoxCollider2D:
   m_ObjectHideFlags: 0

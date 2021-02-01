@@ -16,7 +16,7 @@ public class DoorManagement : MonoBehaviour
 
     #region Private Fields
     [SerializeField]
-    private bool openDoor = false;
+    private bool doorOpened = false;
     [SerializeField]
     private Transform target = null;
     [SerializeField]
@@ -29,7 +29,8 @@ public class DoorManagement : MonoBehaviour
     enum Type { slab, timer, openOnce, item, openClose };
     [SerializeField]
     private Type type = Type.openOnce;
-
+    private Coroutine coroutine = null;
+    private float distanceMax = 0.0f;
     #endregion
 
 
@@ -37,7 +38,7 @@ public class DoorManagement : MonoBehaviour
 
     public bool IsOpen()
     {
-        return openDoor;
+        return doorOpened;
     }
 
     #endregion
@@ -49,6 +50,13 @@ public class DoorManagement : MonoBehaviour
     {
         posInitial = transform.position;
         posDesired = target.position;
+        distanceMax = Vector2.Distance(posInitial, posDesired);
+
+        for (int i = 0; i < interruptors.Count; i++)
+        {
+            interruptors[i].OnEnterZone += CheckInterruptors;
+            interruptors[i].OnExitZone += CheckInterruptors;
+        }
     }
 
 
@@ -62,10 +70,13 @@ public class DoorManagement : MonoBehaviour
 
     #region Private Methods
 
-    private IEnumerator MoveDoor(Vector2 targetPosition, float duration)
+    private IEnumerator MoveDoor(Vector2 targetPosition)
     {
         float time = 0.0f;
         Vector2 startPosition = transform.position;
+
+        float distance = Vector2.Distance(startPosition, targetPosition);
+        float duration = (distance * speed) / distanceMax;
 
         while (time < duration)
         {
@@ -82,7 +93,18 @@ public class DoorManagement : MonoBehaviour
     {
         for (int i = 0; i < interruptors.Count; i++)
         {
-            interruptors[i].SetActivated();
+            if (interruptors[i].GetActivated())
+            {
+                interruptors[i].Desactivate();
+            }
+        }
+    }
+
+    private void DeleteInterruptors()
+    {
+        for (int i = 0; i < interruptors.Count; i++)
+        {
+            interruptors[i].GetComponent<Interruptor>().enabled = false;
         }
     }
     #endregion
@@ -90,43 +112,79 @@ public class DoorManagement : MonoBehaviour
 
     #region Public Methods
 
-    public void CheckInterruptors()
+    public void CheckInterruptors(bool onSlab)
     {
 
-        if (canMove)
+        //the door isn't in movement
+        int nbActivated = 0;
+        for (int i = 0; i < interruptors.Count; i++)
         {
-            //the door isn't in movement
-            int nbActivated = 0;
-            for (int i = 0; i < interruptors.Count; i++)
+            //how many interruptors are activated ?
+            if (interruptors[i].GetActivated())
             {
-                //how many interruptors are activated ?
-                if (interruptors[i].GetActivated())
-                {
-                    nbActivated++;
-                }
+                nbActivated++;
+            }
+        }
+
+        if (nbActivated == interruptors.Count && onSlab)
+        {
+            //they are all activated
+            DoorOpening();
+
+        }
+        else
+        {
+            if (doorOpened)
+            {
+                //the door is open but all interruptors aren't activated so we want to close it
+                DoorClosing();
             }
 
-            if (nbActivated == interruptors.Count)
-            {
-                //they are all activated
-                StartCoroutine(MoveDoor(posDesired, speed));
-                openDoor = true;
-            }
-            else
-            {
-                if (openDoor)
-                {
-                    //the door is open but all interruptors aren't activated so we want to close it
-                    StartCoroutine(MoveDoor(posInitial, speed));
-                    openDoor = false;
-                }
+        }
 
+    }
+
+    public void DoorOpening()
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+        coroutine = StartCoroutine(MoveDoor(posDesired));
+        doorOpened = true;
+
+        if (type == Type.openOnce)
+        {
+            DeleteInterruptors();
+        }
+
+        if (type == Type.openClose)
+        {
+            if (interruptors[0].GetActivated())
+            {
+                coroutine = StartCoroutine(MoveDoor(posInitial));
             }
         }
 
     }
 
+    public void DoorClosing()
+    {
+        if (type != Type.openClose)
+        {
 
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
+            coroutine = StartCoroutine(MoveDoor(posInitial));
+            doorOpened = false;
+        }
+
+
+    }
     #endregion
-
+    //openOnce = OK
+    //slab = ok
+    //openClose = presque
 }
