@@ -6,128 +6,87 @@ using UnityEngine.InputSystem;
 public class Interruptor : MonoBehaviour
 {
 
-	#region Public Fields
+    #region Public Fields
 
 
 
-	#endregion
+    #endregion
 
 
-	#region Private Fields
-	[SerializeField]
-	private bool activated = false;
-	[SerializeField]
-	private List<DoorManagement> doors = null;
-    enum Type { slab, timer, classic, item, openClose };
-	[SerializeField]
-	private Type type = Type.openClose;
-	[SerializeField]
-	private float timerInit = 0.0f;
-	private float timer = 0.0f;
-	private bool timerStarted = false;
-
-	#endregion
+    #region Private Fields
+    [SerializeField]
+    private bool activated = false;
+    [SerializeField]
+    private DoorManagement door = null;
+    [SerializeField]
+    private float timerInit = 0.0f;
+    private float timer = 0.0f;
+    private bool timerStarted = false;
+    private bool onSlab = false;
 
 
-	#region Accessors
+    #endregion
 
-	public bool GetActivated()
+
+    #region Accessors
+
+    public bool GetActivated()
     {
-		return activated;
+        return activated;
     }
 
-	public void SetActivated()
+    public void SetActivated()
     {
-		if (activated)
-        {
-			activated = false;
-        }
-        else
-        {
-			activated = true;
-        }
+        activated = !activated;
+    }
+    #endregion
 
-        for (int i = 0; i < doors.Count; i++)
-        {
-			doors[i].CheckInterruptors();
-		}
+
+    #region MonoBehaviour Methods
+
+    void Start()
+    {
+
     }
 
-	#endregion
+
+    void Update()
+    {
+
+    }
+
+    #endregion
 
 
-	#region MonoBehaviour Methods
-
-	void Start()
-	{
-		timer = timerInit;
-	}
+    #region Private Methods
 
 
-	void Update()
-	{
-        if (timerStarted)
-        {
-			timer -= Time.deltaTime;
-			Debug.Log(timer);
-			if (timer <= 0.0f)
-			{
-				
-				for (int i = 0; i < doors.Count; i++)
-				{
-                    if (doors[i].IsOpen())
-                    {
-						this.gameObject.SetActive(false);
-					}
-                    else
-                    {
-						timer = timerInit;
-						activated = false;
-						timerStarted = false;
-                    }
-				}
-			}
-		}
-	}
-
-	#endregion
+    #endregion
 
 
-	#region Private Methods
+    #region Public Methods
 
 
-	#endregion
+    #endregion
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        SetActivated();
+        PreventDoor();
+    }
 
-	#region Public Methods
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        SetActivated();
+        PreventDoor();
+    }
 
-	public void Interact(InputAction.CallbackContext context)
-	{
-		
-		if (context.action.phase == InputActionPhase.Started)
-		{
-			SetActivated();
-			switch (type)
-            {
-                case Type.slab:
-                    break;
-                case Type.timer:
-					timerStarted = true;
-                    break;
-                case Type.classic:
-					this.gameObject.SetActive(false);
-					break;
-                case Type.item:
-                    break;
-                case Type.openClose:
-                    break;
-                default:
-                    break;
-            }
-        }
+    private void PreventDoor()
+    {
+        door.CheckInterruptors();
+    }
 
-	}
-	#endregion
-
+    //interrupteur n'a qu'une porte
+    //c'est la porte qui est typée
 
 }

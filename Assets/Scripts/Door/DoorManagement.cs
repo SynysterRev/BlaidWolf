@@ -26,6 +26,9 @@ public class DoorManagement : MonoBehaviour
     private Vector2 posDesired = Vector2.zero;
     private Vector2 posInitial = Vector2.zero;
     private bool canMove = true;
+    enum Type { slab, timer, openOnce, item, openClose };
+    [SerializeField]
+    private Type type = Type.openOnce;
 
     #endregion
 
@@ -75,7 +78,13 @@ public class DoorManagement : MonoBehaviour
         transform.position = targetPosition;
     }
 
-
+    private void DesactivateInterruptors()
+    {
+        for (int i = 0; i < interruptors.Count; i++)
+        {
+            interruptors[i].SetActivated();
+        }
+    }
     #endregion
 
 
@@ -86,9 +95,11 @@ public class DoorManagement : MonoBehaviour
 
         if (canMove)
         {
+            //the door isn't in movement
             int nbActivated = 0;
             for (int i = 0; i < interruptors.Count; i++)
             {
+                //how many interruptors are activated ?
                 if (interruptors[i].GetActivated())
                 {
                     nbActivated++;
@@ -97,6 +108,7 @@ public class DoorManagement : MonoBehaviour
 
             if (nbActivated == interruptors.Count)
             {
+                //they are all activated
                 StartCoroutine(MoveDoor(posDesired, speed));
                 openDoor = true;
             }
@@ -104,15 +116,17 @@ public class DoorManagement : MonoBehaviour
             {
                 if (openDoor)
                 {
+                    //the door is open but all interruptors aren't activated so we want to close it
                     StartCoroutine(MoveDoor(posInitial, speed));
                     openDoor = false;
                 }
 
             }
         }
+
     }
 
-    //pouvoir choisir le type d'interrupteur (dalle, timer, basique, avec item..)
+
     #endregion
 
 }
