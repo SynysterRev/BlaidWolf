@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80537ea78d1cbef4db93fbef85d5677c, type: 3}
   m_Name: Dash
   m_EditorClassIdentifier: 
-  range: 500
+  range: 3
   cooldown: 1
   castTime: 0
   repulseForce: 3
   lifeSkill: 0
   speed: 50
+  timeSkill: 0
   damage: 1
   manaCost: 0
   adrenalineCost: 0

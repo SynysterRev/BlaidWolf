@@ -18,6 +18,7 @@ public class DashSkill : MonoBehaviour
     private float currentDistance = 0.0f;
     private float cooldown = 0.0f;
     private bool isDashing = false;
+    private Vector2 lastPos = Vector2.zero;
     private Vector2 direction = Vector2.zero;
     private Vector2 velocity = Vector2.zero;
     private Rigidbody2D rb = null;
@@ -38,28 +39,40 @@ public class DashSkill : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-
-    void Update()
+    private void Update()
     {
         if (cooldown > 0.0f)
         {
             cooldown = Mathf.Clamp(cooldown - Time.deltaTime, 0.0f, 1000.0f);
         }
+
+        Debug.DrawRay(transform.position, direction * 0.7f, Color.blue);
+    }
+
+
+    private void FixedUpdate()
+    {
+
         if (isDashing)
         {
             if (rb)
             {
-                if (currentDistance >= dataDash.range)
+                if (CanMove())
                 {
-                    isDashing = false;
-                    currentDistance = 0.0f;
-                    rb.velocity = Vector2.zero;
-                    OnEndDash?.Invoke();
-                    return;
+                    velocity = direction * dataDash.speed;
+                    currentDistance += Vector2.Distance(lastPos, transform.position);
+                    if (currentDistance >= dataDash.range)
+                    {
+                        StopDash();
+                        return;
+                    }
+                    rb.velocity = velocity;
+                    lastPos = transform.position;
                 }
-                velocity = direction * dataDash.speed;
-                rb.velocity = velocity;
-                currentDistance += velocity.magnitude;
+                else
+                {
+                    StopDash();
+                }
             }
         }
     }
@@ -68,8 +81,23 @@ public class DashSkill : MonoBehaviour
 
 
     #region Private Methods
+    private bool CanMove()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0.7f);
+        if (hit.collider != null)
+        {
+            return false;
+        }
+        return true;
+    }
 
-
+    private void StopDash()
+    {
+        isDashing = false;
+        currentDistance = 0.0f;
+        rb.velocity = Vector2.zero;
+        OnEndDash?.Invoke();
+    }
 
     #endregion
 
@@ -78,7 +106,6 @@ public class DashSkill : MonoBehaviour
     //return true when player can dash
     public bool Dash(Vector2 direction, ref DataPlayer dataPlayer)
     {
-
         if (cooldown > 0.0f)
             return false;
         if (dataPlayer.EnoughtMana(dataDash.manaCost))
@@ -89,6 +116,7 @@ public class DashSkill : MonoBehaviour
             dataPlayer.LooseMana(dataDash.manaCost);
             this.direction = direction.normalized;
             cooldown = dataDash.cooldown;
+            lastPos = transform.position;
         }
         else
         {
@@ -96,7 +124,6 @@ public class DashSkill : MonoBehaviour
         }
         return true;
     }
-
 
     #endregion
 
