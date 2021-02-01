@@ -22,7 +22,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "OpenDoor",
+                    "name": "Interact",
                     "type": "Button",
                     "id": "dbceece6-c86e-440b-bfb9-b7657ef9636f",
                     "expectedControlType": "Button",
@@ -233,7 +233,7 @@
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "OpenDoor",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
