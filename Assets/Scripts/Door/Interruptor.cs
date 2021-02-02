@@ -101,5 +101,5 @@ public class Interruptor : MonoBehaviour
         }
 
     }
-
+    //02.02.21 => onSlab useless (vu que comme activate) ??
 }
