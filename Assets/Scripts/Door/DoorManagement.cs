@@ -16,7 +16,7 @@ public class DoorManagement : MonoBehaviour
 
     #region Private Fields
     [SerializeField]
-    private bool openDoor = false;
+    private bool doorOpened = false;
     [SerializeField]
     private Transform target = null;
     [SerializeField]
@@ -29,7 +29,13 @@ public class DoorManagement : MonoBehaviour
     enum Type { slab, timer, openOnce, item, openClose };
     [SerializeField]
     private Type type = Type.openOnce;
+    private Coroutine coroutine = null;
+    private float distanceMax = 0.0f;
 
+    [SerializeField]
+    private float timerInit = 0.0f;
+    private float timer = 0.0f;
+    private bool timerStarted = false;
     #endregion
 
 
@@ -37,7 +43,7 @@ public class DoorManagement : MonoBehaviour
 
     public bool IsOpen()
     {
-        return openDoor;
+        return doorOpened;
     }
 
     #endregion
@@ -49,12 +55,33 @@ public class DoorManagement : MonoBehaviour
     {
         posInitial = transform.position;
         posDesired = target.position;
+        distanceMax = Vector2.Distance(posInitial, posDesired);
+
+        timer = timerInit;
+
+        for (int i = 0; i < interruptors.Count; i++)
+        {
+            interruptors[i].OnEnterZone += CheckInterruptors;
+            interruptors[i].OnExitZone += CheckInterruptors;
+        }
     }
 
 
     void Update()
     {
-
+        if (timerStarted)
+        {
+            timer -= Time.deltaTime;
+            if (timer <= 0.0f)
+            {
+                timerStarted = false;
+                if (coroutine != null)
+                {
+                    StopCoroutine(coroutine);
+                }
+                coroutine = StartCoroutine(MoveDoor(posInitial));
+            }
+        }
     }
 
     #endregion
@@ -62,10 +89,13 @@ public class DoorManagement : MonoBehaviour
 
     #region Private Methods
 
-    private IEnumerator MoveDoor(Vector2 targetPosition, float duration)
+    private IEnumerator MoveDoor(Vector2 targetPosition)
     {
         float time = 0.0f;
         Vector2 startPosition = transform.position;
+
+        float distance = Vector2.Distance(startPosition, targetPosition);
+        float duration = (distance * speed) / distanceMax;
 
         while (time < duration)
         {
@@ -82,7 +112,18 @@ public class DoorManagement : MonoBehaviour
     {
         for (int i = 0; i < interruptors.Count; i++)
         {
-            interruptors[i].SetActivated();
+            if (interruptors[i].GetActivated())
+            {
+                interruptors[i].Desactivate();
+            }
+        }
+    }
+
+    private void DeleteInterruptors()
+    {
+        for (int i = 0; i < interruptors.Count; i++)
+        {
+            interruptors[i].GetComponent<Interruptor>().enabled = false;
         }
     }
     #endregion
@@ -90,43 +131,112 @@ public class DoorManagement : MonoBehaviour
 
     #region Public Methods
 
-    public void CheckInterruptors()
+    public void CheckInterruptors(bool onSlab)
     {
 
-        if (canMove)
+        //the door isn't in movement
+        int nbActivated = 0;
+        for (int i = 0; i < interruptors.Count; i++)
         {
-            //the door isn't in movement
-            int nbActivated = 0;
-            for (int i = 0; i < interruptors.Count; i++)
+            //how many interruptors are activated ?
+            if (interruptors[i].GetActivated())
             {
-                //how many interruptors are activated ?
-                if (interruptors[i].GetActivated())
-                {
-                    nbActivated++;
-                }
+                nbActivated++;
+            }
+        }
+
+        if (nbActivated == interruptors.Count && onSlab)
+        {
+            //they are all activated
+            DoorOpening();
+
+        }
+        else
+        {
+            if (doorOpened)
+            {
+                //the door is open but all interruptors aren't activated so we want to close it
+                DoorClosing();
             }
 
-            if (nbActivated == interruptors.Count)
+        }
+
+    }
+
+    public void DoorOpening()
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+
+        if (type == Type.openClose)
+        {
+
+            if (doorOpened)
             {
-                //they are all activated
-                StartCoroutine(MoveDoor(posDesired, speed));
-                openDoor = true;
+                coroutine = StartCoroutine(MoveDoor(posInitial));
+                doorOpened = false;
             }
             else
             {
-                if (openDoor)
-                {
-                    //the door is open but all interruptors aren't activated so we want to close it
-                    StartCoroutine(MoveDoor(posInitial, speed));
-                    openDoor = false;
-                }
+                coroutine = StartCoroutine(MoveDoor(posDesired));
+                doorOpened = true;
+            }
+        }
+        else
+        {
+            coroutine = StartCoroutine(MoveDoor(posDesired));
+            doorOpened = true;
 
+            if (type == Type.openOnce)
+            {
+                DeleteInterruptors();
+            }
+
+            if (type == Type.timer)
+            {
+                //reset timer
+                timer = timerInit;
+                //start timer
+                timerStarted = true;
             }
         }
 
     }
 
+    public void DoorClosing()
+    {
+        if (type != Type.openClose && type != Type.timer)
+        {
 
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
+            coroutine = StartCoroutine(MoveDoor(posInitial));
+            doorOpened = false;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //reset timer
+        timer = timerInit;
+        //can pass the door only once
+        DesactivateInterruptors();
+        //stop timer
+        timerStarted = false;
+        //put the door open
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+        }
+        coroutine = StartCoroutine(MoveDoor(posDesired));
+    }
     #endregion
-
+    //openOnce = The door can only be open once.
+    //slab     = While their is something in the collider of the interruptor the door stay open. If this something left, the door will close etc.
+    //openClose = If something pass on the collider of the interruptor, the door will open. If it's pass again, the door will close etc.
+    //timer = When the interruptor is activated, the door opens. At the same time, a timer is started. If at the end of the timer something don't pass the door, it's will close it.
 }
