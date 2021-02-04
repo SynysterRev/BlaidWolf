@@ -26,7 +26,7 @@ public interface IInteraction
 
 
 	#region Public Methods
-	public void Interaction();
+	void Interaction();
 
 
 	#endregion
