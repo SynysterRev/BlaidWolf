@@ -103,6 +103,9 @@ public class Interruptor : MonoBehaviour, IInteraction
 
     public void Interaction()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("cc");
+        onSlab = true;
+        Activate();
+        OnEnterZone?.Invoke(onSlab);
     }
 }
