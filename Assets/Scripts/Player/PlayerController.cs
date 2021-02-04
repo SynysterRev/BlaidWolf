@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         MoveCharacter();
-        if(isRepulsed)
+        if (isRepulsed)
         {
             nbFrameRepulsed--;
             if (nbFrameRepulsed == 0)
@@ -190,6 +190,22 @@ public class PlayerController : MonoBehaviour
                 {
                     isDashing = true;
                     dash.OnEndDash += EndDashing;
+                }
+            }
+        }
+    }
+
+    public void Interaction(InputAction.CallbackContext context)
+    {
+        if (context.action.phase == InputActionPhase.Started)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, lastDirection, 0.7f);
+            if (hit.collider != null)
+            {
+                IInteraction interact = hit.collider.GetComponent<IInteraction>();
+                if(interact != null)
+                {
+                    interact.Interaction();
                 }
             }
         }
