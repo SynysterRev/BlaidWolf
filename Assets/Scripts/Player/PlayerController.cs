@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
 
     private bool isMoving = false;
     private bool hasStop = false;
+    private bool isRepulsed = false;
+    private int nbFrameRepulsed = 4;
     //Skills var
     private bool isDashing = false;
     //private 
@@ -52,6 +54,15 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         MoveCharacter();
+        if(isRepulsed)
+        {
+            nbFrameRepulsed--;
+            if (nbFrameRepulsed == 0)
+            {
+                isRepulsed = false;
+                rb.velocity = dir * speed;
+            }
+        }
     }
     #endregion
 
@@ -73,7 +84,7 @@ public class PlayerController : MonoBehaviour
 
     private void MoveCharacter()
     {
-        if (isDashing) return;
+        if (isDashing || isRepulsed) return;
         //prevent walking in diagonal
         //use the last direction pressed
         if (isMoving)
@@ -123,7 +134,7 @@ public class PlayerController : MonoBehaviour
                 lastDirection = dir;
             }
         }
-        else if(!isMoving && !hasStop)
+        else if (!isMoving && !hasStop)
         {
             hasStop = true;
             rb.velocity = dir * speed;
@@ -134,7 +145,25 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!isDashing)
+        {
+            if (collision.collider.CompareTag("Enemy"))
+            {
+                isRepulsed = true;
+                nbFrameRepulsed = 4;
+                rb.AddForce(-lastDirection * 25.0f, ForceMode2D.Impulse);
+            }
+        }
+        else
+        {
+
+        }
+    }
     #endregion
+
     #region Public methods
     public void Move(InputAction.CallbackContext context)
     {
@@ -145,7 +174,7 @@ public class PlayerController : MonoBehaviour
             isMoving = true;
             hasStop = false;
         }
-        else if(context.action.phase == InputActionPhase.Canceled)
+        else if (context.action.phase == InputActionPhase.Canceled)
         {
             isMoving = false;
         }

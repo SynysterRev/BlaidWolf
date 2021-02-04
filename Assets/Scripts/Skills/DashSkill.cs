@@ -45,14 +45,11 @@ public class DashSkill : MonoBehaviour
         {
             cooldown = Mathf.Clamp(cooldown - Time.deltaTime, 0.0f, 1000.0f);
         }
-
-        Debug.DrawRay(transform.position, direction * 0.7f, Color.blue);
     }
 
 
     private void FixedUpdate()
     {
-
         if (isDashing)
         {
             if (rb)
