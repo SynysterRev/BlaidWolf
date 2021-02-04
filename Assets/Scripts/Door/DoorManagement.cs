@@ -3,6 +3,14 @@ using System.Collections;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using UnityEngine.UI;
+public enum DoorType
+{
+    Item,      //1..1
+    OpenClose, //1..*
+    OpenOnce,  //1..*
+    Slab,      //1..* 
+    Timer      //1..1
+}
 
 public class DoorManagement : MonoBehaviour
 {
@@ -16,26 +24,26 @@ public class DoorManagement : MonoBehaviour
 
     #region Private Fields
     [SerializeField]
-    private bool doorOpened = false;
-    [SerializeField]
     private Transform target = null;
     [SerializeField]
     private float speed = 0.0f;
     [SerializeField]
     private List<Interruptor> interruptors = null;
-    private Vector2 posDesired = Vector2.zero;
-    private Vector2 posInitial = Vector2.zero;
-    private bool canMove = true;
-    enum Type { slab, timer, openOnce, item, openClose };
-    [SerializeField]
-    private Type type = Type.openOnce;
-    private Coroutine coroutine = null;
-    private float distanceMax = 0.0f;
-
     [SerializeField]
     private float timerInit = 0.0f;
+    [SerializeField]
+    private DoorType type = DoorType.OpenOnce;
+
+    private Coroutine coroutine = null;
+
+    private Vector2 posDesired = Vector2.zero;
+    private Vector2 posInitial = Vector2.zero;
+
+    private float distanceMax = 0.0f;
     private float timer = 0.0f;
+
     private bool timerStarted = false;
+    private bool doorOpened = false;
     #endregion
 
 
@@ -62,7 +70,7 @@ public class DoorManagement : MonoBehaviour
         for (int i = 0; i < interruptors.Count; i++)
         {
             interruptors[i].OnEnterZone += CheckInterruptors;
-            interruptors[i].OnExitZone += CheckInterruptors;
+            interruptors[i].OnExitZone  += CheckInterruptors;
         }
     }
 
@@ -101,10 +109,8 @@ public class DoorManagement : MonoBehaviour
         {
             time += Time.deltaTime;
             transform.position = Vector2.Lerp(startPosition, targetPosition, time / duration);
-            canMove = false;
             yield return null;
         }
-        canMove = true;
         transform.position = targetPosition;
     }
 
@@ -170,7 +176,7 @@ public class DoorManagement : MonoBehaviour
             StopCoroutine(coroutine);
         }
 
-        if (type == Type.openClose)
+        if (type == DoorType.OpenClose)
         {
 
             if (doorOpened)
@@ -189,12 +195,12 @@ public class DoorManagement : MonoBehaviour
             coroutine = StartCoroutine(MoveDoor(posDesired));
             doorOpened = true;
 
-            if (type == Type.openOnce)
+            if (type == DoorType.OpenOnce)
             {
                 DeleteInterruptors();
             }
 
-            if (type == Type.timer)
+            if (type == DoorType.Timer)
             {
                 //reset timer
                 timer = timerInit;
@@ -207,7 +213,7 @@ public class DoorManagement : MonoBehaviour
 
     public void DoorClosing()
     {
-        if (type != Type.openClose && type != Type.timer)
+        if (type != DoorType.OpenClose && type != DoorType.Timer)
         {
 
             if (coroutine != null)
@@ -221,19 +227,23 @@ public class DoorManagement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //reset timer
-        timer = timerInit;
-        //can pass the door only once
-        DesactivateInterruptors();
-        //stop timer
-        timerStarted = false;
-        //put the door open
-        if (coroutine != null)
+        if (type == DoorType.Timer)
         {
-            StopCoroutine(coroutine);
+            //reset timer
+            timer = timerInit;
+            //can pass the door only once
+            DesactivateInterruptors();
+            //stop timer
+            timerStarted = false;
+            //put the door open
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
+            coroutine = StartCoroutine(MoveDoor(posDesired));
         }
-        coroutine = StartCoroutine(MoveDoor(posDesired));
     }
+
     #endregion
     //openOnce = The door can only be open once.
     //slab     = While their is something in the collider of the interruptor the door stay open. If this something left, the door will close etc.

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
-public class Interruptor : MonoBehaviour
+public class Interruptor : MonoBehaviour, IInteraction
 {
 
     #region Public Fields
@@ -99,7 +99,10 @@ public class Interruptor : MonoBehaviour
             Desactivate();
             OnExitZone?.Invoke(onSlab);
         }
-
     }
-    //02.02.21 => onSlab useless (vu que comme activate) ??
+
+    public void Interaction()
+    {
+        throw new System.NotImplementedException();
+    }
 }
