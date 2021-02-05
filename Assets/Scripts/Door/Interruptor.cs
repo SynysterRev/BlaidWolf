@@ -16,10 +16,9 @@ public class Interruptor : MonoBehaviour, IInteraction
     #region Private Fields
     [SerializeField]
     private bool activated = false;
-    private bool onSlab = false;
-    public delegate void DelegateEnterZone(bool onSlab);
+    public delegate void DelegateEnterZone();
     public event DelegateEnterZone OnEnterZone;
-    public delegate void DelegateExitZone(bool onSlab);
+    public delegate void DelegateExitZone();
     public event DelegateEnterZone OnExitZone;
 
     #endregion
@@ -45,11 +44,6 @@ public class Interruptor : MonoBehaviour, IInteraction
     public void Desactivate()
     {
         activated = false;
-    }
-
-    public bool GetOnSlab()
-    {
-        return onSlab;
     }
     #endregion
 
@@ -85,9 +79,8 @@ public class Interruptor : MonoBehaviour, IInteraction
     {
         if (isActiveAndEnabled)
         {
-            onSlab = true;
             Activate();
-            OnEnterZone?.Invoke(onSlab);
+            OnEnterZone?.Invoke();
         }
     }
 
@@ -95,17 +88,17 @@ public class Interruptor : MonoBehaviour, IInteraction
     {
         if (isActiveAndEnabled)
         {
-            onSlab = false;
             Desactivate();
-            OnExitZone?.Invoke(onSlab);
+            OnExitZone?.Invoke();
         }
     }
 
     public void Interaction()
     {
-        Debug.Log("cc");
-        onSlab = true;
-        Activate();
-        OnEnterZone?.Invoke(onSlab);
+        if (isActiveAndEnabled)
+        {
+            SetActivated();
+            OnEnterZone?.Invoke();
+        }
     }
 }
