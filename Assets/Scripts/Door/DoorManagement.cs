@@ -70,7 +70,7 @@ public class DoorManagement : MonoBehaviour
         for (int i = 0; i < interruptors.Count; i++)
         {
             interruptors[i].OnEnterZone += CheckInterruptors;
-            interruptors[i].OnExitZone  += CheckInterruptors;
+            interruptors[i].OnExitZone += CheckInterruptors;
         }
     }
 
@@ -137,10 +137,9 @@ public class DoorManagement : MonoBehaviour
 
     #region Public Methods
 
-    public void CheckInterruptors(bool onSlab)
+    public void CheckInterruptors()
     {
 
-        //the door isn't in movement
         int nbActivated = 0;
         for (int i = 0; i < interruptors.Count; i++)
         {
@@ -151,7 +150,7 @@ public class DoorManagement : MonoBehaviour
             }
         }
 
-        if (nbActivated == interruptors.Count && onSlab)
+        if (nbActivated == interruptors.Count)
         {
             //they are all activated
             DoorOpening();
@@ -164,9 +163,7 @@ public class DoorManagement : MonoBehaviour
                 //the door is open but all interruptors aren't activated so we want to close it
                 DoorClosing();
             }
-
         }
-
     }
 
     public void DoorOpening()
@@ -208,12 +205,11 @@ public class DoorManagement : MonoBehaviour
                 timerStarted = true;
             }
         }
-
     }
 
     public void DoorClosing()
     {
-        if (type != DoorType.OpenClose && type != DoorType.Timer)
+        if (type != DoorType.Timer)
         {
 
             if (coroutine != null)
@@ -232,7 +228,7 @@ public class DoorManagement : MonoBehaviour
             //reset timer
             timer = timerInit;
             //can pass the door only once
-            DesactivateInterruptors();
+            DeleteInterruptors();
             //stop timer
             timerStarted = false;
             //put the door open

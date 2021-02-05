@@ -8,14 +8,15 @@ public class DataPlayer
     #endregion
 
     #region Private Fields
-    private const float Min  = 0.0f;
-    private float health     = 100.0f;
-    private float healthMax  = 100.0f;
-    private float mana       = 100.0f;
-    private float manaMax    = 100.0f;
+    private const float Min = 0.0f;
+    private float health = 100.0f;
+    private float healthMax = 100.0f;
+    private float mana = 100.0f;
+    private float manaMax = 100.0f;
     private float adrenaline = 100.0f;
     private float adrenalineMax = 100.0f;
-    private bool  isDead     = false;
+    private bool isDead = false;
+    private bool isInvulnerable = false;
     #endregion
 
     #region Accessors
@@ -31,6 +32,12 @@ public class DataPlayer
 
     public float GetAdrenalineMax() => adrenalineMax;
 
+    public bool IsDead() => isDead;
+
+    public bool IsInvulnerable() => isInvulnerable;
+
+    public void SetIsInvulnerable() => isInvulnerable = !isInvulnerable;
+
     #endregion
 
     #region Public Methods
@@ -38,16 +45,14 @@ public class DataPlayer
     //Health management
     public void LooseHealth(float damage)
     {
-        health = Mathf.Clamp(value: health - damage, min: Min, max: healthMax);
-        if (health <= Min)
+        if (!isInvulnerable)
         {
-            Death();
+            health = Mathf.Clamp(value: health - damage, min: Min, max: healthMax);
+            if (health <= Min)
+            {
+                Death();
+            }
         }
-    }
-
-    public bool IsDead()
-    {
-        return isDead;
     }
 
     public void Heal(float heal)
@@ -65,12 +70,12 @@ public class DataPlayer
 
     //Mana management
 
-    public void LooseMana (float mana)
+    public void LooseMana(float mana)
     {
         this.mana = Mathf.Clamp(value: this.mana - mana, min: Min, max: manaMax);
     }
 
-    public bool EnoughtMana (float mana)
+    public bool EnoughtMana(float mana)
     {
         if (this.mana >= mana)
             return true;
@@ -86,7 +91,7 @@ public class DataPlayer
     }
 
     //Adrenaline management
-    public void ConsumAdrenaline ()
+    public void ConsumAdrenaline()
     {
         if (adrenaline == adrenalineMax)
         {
@@ -94,7 +99,7 @@ public class DataPlayer
         }
     }
 
-    public void RegenAdrenaline (float adrenaline)
+    public void RegenAdrenaline(float adrenaline)
     {
         this.adrenaline += adrenaline;
         if (this.adrenaline > adrenalineMax)
