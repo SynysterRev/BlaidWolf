@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        dataPlayer = new DataPlayer();
+        //dataPlayer = new DataPlayer();
     }
 
     // Update is called once per frame

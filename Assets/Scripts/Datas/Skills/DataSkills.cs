@@ -14,7 +14,8 @@ public class DataSkills : ScriptableObject
     public float speed;
     public float timeSkill;
     [Header("Character")]
-    public float damage;
+    public float power;
+    public float timeBetweenDamage;
     public float manaCost;
     public float adrenalineCost;
     public float lifeCost;
