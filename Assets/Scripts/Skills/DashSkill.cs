@@ -105,12 +105,12 @@ public class DashSkill : MonoBehaviour
     {
         if (cooldown > 0.0f)
             return false;
-        if (dataPlayer.EnoughtMana(dataDash.manaCost))
+        if (PlayerManager.Instance.EnoughtMana(dataDash.manaCost))
         {
             if (!isDashing)
                 isDashing = true;
             else return false;
-            dataPlayer.LooseMana(dataDash.manaCost);
+            PlayerManager.Instance.LooseMana(dataDash.manaCost);
             this.direction = direction.normalized;
             cooldown = dataDash.cooldown;
             lastPos = transform.position;
